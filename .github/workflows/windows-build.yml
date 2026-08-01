@@ -1,0 +1,102 @@
+name: Windows Build CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  VCPKG_ROOT: C:\vcpkg
+
+jobs:
+  windows-build:
+    name: Windows Build (MSVC + vcpkg)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update vcpkg
+        run: |
+          cd C:\vcpkg
+          git pull
+
+      - name: Install dependencies
+        run: |
+          vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows lua:x64-windows
+        shell: cmd
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -G "Visual Studio 17 2022" -A x64
+        shell: cmd
+
+      - name: Build
+        run: cmake --build build --config Release
+        shell: cmd
+
+      - name: Test Engine
+        run: |
+          cd build\Release
+          .\vn_engine.exe --test
+        shell: cmd
+
+      - name: Test Editor CLI
+        run: |
+          cd build\Release
+          .\vn_editor.exe --cli --new --save test_project.lua
+          .\vn_editor.exe --cli --open test_project.lua --validate --list
+          .\vn_editor.exe --cli --open test_project.lua --export test_game.lua
+        shell: cmd
+
+      - name: Test Pak Tool
+        run: |
+          cd build\Release
+          .\pak_tool.exe pack ..\..\scripts test_data.pak
+          .\pak_tool.exe list test_data.pak
+        shell: cmd
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-output
+          path: build/Release/*.exe
+
+  linux-build:
+    name: Linux Build (GCC)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev liblua5.3-dev
+
+      - name: Configure CMake
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test Engine
+        run: |
+          cd build
+          xvfb-run -a ./bin/vn_engine --test
+
+      - name: Test Editor CLI
+        run: |
+          cd build
+          ./bin/vn_editor --cli --new --save /tmp/test_proj.lua
+          ./bin/vn_editor --cli --open /tmp/test_proj.lua --validate --list
+          ./bin/vn_editor --cli --open /tmp/test_proj.lua --export /tmp/test_game.lua
