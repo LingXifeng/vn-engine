@@ -41,13 +41,13 @@ jobs:
       - name: Test Engine
         shell: pwsh
         run: |
-          cd build\Release
+          cd build\bin\Release
           .\vn_engine.exe --test
 
       - name: Test Editor CLI
         shell: pwsh
         run: |
-          cd build\Release
+          cd build\bin\Release
           .\vn_editor.exe --cli --new --save test_project.lua
           .\vn_editor.exe --cli --open test_project.lua --validate --list
           .\vn_editor.exe --cli --open test_project.lua --export test_game.lua
@@ -55,8 +55,8 @@ jobs:
       - name: Test Pak Tool
         shell: pwsh
         run: |
-          cd build\Release
-          .\pak_tool.exe pack ..\..\scripts test_data.pak
+          cd build\bin\Release
+          .\pak_tool.exe pack ..\..\..\scripts test_data.pak
           .\pak_tool.exe list test_data.pak
 
       - name: Upload artifacts
@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build-output
-          path: build/Release/*.exe
+          path: build/bin/Release/*.exe
 
   linux-build:
     name: Linux Build (GCC)
