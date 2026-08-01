@@ -253,6 +253,7 @@ endif()
 set_target_properties(vn_editor PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Windows: 編編譯時隱藏控制台窗口（GUI 模式）
-if(VN_PLATFORM_WINDOWS AND ENABLE_EDITOR_GUI)
-    set_target_properties(vn_editor PROPERTIES WIN32_EXECUTABLE TRUE)
-endif()
+# 注意：vn_editor 同時有 CLI 模式需要控制台，因此不設 WIN32_EXECUTABLE
+# if(VN_PLATFORM_WINDOWS AND ENABLE_EDITOR_GUI)
+#     set_target_properties(vn_editor PROPERTIES WIN32_EXECUTABLE TRUE)
+# endif()
