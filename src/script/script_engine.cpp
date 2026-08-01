@@ -153,13 +153,8 @@ int ScriptEngine::resumeCoroutine(int nargs) {
     if (!m_coroutine || m_coroutineDone) return -1;
     int nres = 0;
 #if LUA_VERSION_NUM >= 504
-  #if LUA_VERSION_RELEASE_NUM >= 50404
-    // Lua 5.4.4+: lua_resume(L, nargs, *nres)
-    int status = lua_resume(m_coroutine, nargs, &nres);
-  #else
-    // Lua 5.4.0-5.4.3: lua_resume(L, from, nargs, *nres)
+    // Lua 5.4: lua_resume(L, from, nargs, *nres)
     int status = lua_resume(m_coroutine, m_L, nargs, &nres);
-  #endif
 #else
     // Lua 5.3: lua_resume(L, from, nargs)
     int status = lua_resume(m_coroutine, m_L, nargs);
