@@ -11,6 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 if(WIN32)
     message(STATUS "平台: Windows")
     set(VN_PLATFORM_WINDOWS ON)
+    # SDL2 在 Windows 上會 #define main SDL_main，導致鏈接器找不到 main
+    add_compile_definitions(SDL_MAIN_HANDLED)
 else()
     message(STATUS "平台: Unix/Linux")
     set(VN_PLATFORM_WINDOWS OFF)
