@@ -1,0 +1,38 @@
+# Build artifacts
+build/
+build_editor/
+build_*/
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# CMake generated
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Screenshots and temporary files
+screenshot.bmp
+screenshot.png
+example_screenshot.bmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Save data
+saves/
+*.save
+
+# Logs
+*.log
